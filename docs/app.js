@@ -4,6 +4,58 @@
 // correct = indeks poprawnej odpowiedzi (0=A, 1=B, 2=C, 3=D)
 // ======================================================
 
+// ===================== THEME (dark/light) =====================
+const THEME_KEY = "theme"; // "dark" | "light"
+
+function getSystemTheme() {
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches
+    ? "light"
+    : "dark";
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_KEY, theme);
+  updateThemeButton(theme);
+}
+
+function updateThemeButton(theme) {
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+
+  const ico = btn.querySelector(".theme-ico");
+  const text = btn.querySelector(".theme-text");
+
+  if (theme === "light") {
+    if (ico) ico.textContent = "☀️";
+    if (text) text.textContent = "Light";
+    btn.setAttribute("aria-label", "Zmień motyw na ciemny");
+  } else {
+    if (ico) ico.textContent = "🌙";
+    if (text) text.textContent = "Dark";
+    btn.setAttribute("aria-label", "Zmień motyw na jasny");
+  }
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  const theme = saved === "light" || saved === "dark" ? saved : getSystemTheme();
+  document.documentElement.setAttribute("data-theme", theme);
+  updateThemeButton(theme);
+
+  const btn = document.getElementById("themeToggle");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || getSystemTheme();
+      setTheme(current === "light" ? "dark" : "light");
+    });
+  }
+}
+
+// odpal zawsze (na index i quiz)
+initTheme();
+
+
 const QUIZZES = {
   
   law: {
